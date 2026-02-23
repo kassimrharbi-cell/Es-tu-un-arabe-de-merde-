@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Mon Test</title>
+
+<style>
+body {
+  margin:0;
+  font-family: Arial, Helvetica, sans-serif;
+  background:#e6f2ff;
+  text-align:center;
+}
+
+.container {
+  padding:40px 20px;
+}
+
+.big-title {
+  font-size:40px;
+  font-weight:900;
+  margin-bottom:10px;
+}
+
+.subtitle {
+  display:inline-block;
+  background:white;
+  padding:10px 20px;
+  border:4px solid black;
+  box-shadow:6px 6px 0px black;
+  margin-bottom:30px;
+}
+
+.card {
+  background:white;
+  border:5px solid black;
+  box-shadow:8px 8px 0px black;
+  padding:30px;
+  margin:20px auto;
+  max-width:500px;
+}
+
+input {
+  padding:12px;
+  width:80%;
+  font-size:16px;
+  margin-top:15px;
+}
+
+button {
+  margin-top:20px;
+  padding:15px 25px;
+  font-size:18px;
+  border:4px solid black;
+  cursor:pointer;
+}
+
+.start-btn {
+  background:#4CAF50;
+  color:white;
+  box-shadow:6px 6px 0px black;
+}
+
+.answer-btn {
+  width:40%;
+  margin:10px;
+}
+
+.non { background:white; }
+.oui { background:#4CAF50; color:white; }
+
+.progress-bar {
+  width:90%;
+  height:20px;
+  border:3px solid black;
+  margin:20px auto;
+}
+
+.progress {
+  height:100%;
+  background:#4CAF50;
+  width:0%;
+}
+
+.score {
+  font-size:28px;
+  font-weight:bold;
+}
+
+.hidden {
+  display:none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- PAGE ACCUEIL -->
+<div id="home">
+  <div class="big-title">Teste de l'arabitude</div>
+
+  <div class="subtitle">
+    Es-tu un arabe de merde ?
+  </div>
+
+  <div class="card">
+    <h2>TON PSEUDO :</h2>
+    <input type="text" id="pseudo" placeholder="Entre ton pseudo...">
+    <br>
+    <button class="start-btn" onclick="startQuiz()">COMMENCER</button>
+  </div>
+  <p class="created-by">
+  Créé par <span class="tag">@K-rrry</span>
+</p>
+</div>
+
+
+<!-- PAGE QUIZ -->
+<div id="quiz" class="hidden">
+
+  <div class="score">Score : <span id="score">100</span></div>
+
+  <div class="progress-bar">
+    <div class="progress" id="progress"></div>
+  </div>
+
+  <div class="card">
+    <h2 id="questionText">Question ici</h2>
+
+    <button class="answer-btn non" onclick="answer(false)">NON (0)</button>
+    <button class="answer-btn oui" onclick="answer(true)">OUI (-2)</button>
+  </div>
+
+</div>
+
+<!-- PAGE RESULTAT -->
+<div id="result" class="hidden">
+
+  <div class="card">
+    <h2>RÉSULTAT FINAL</h2>
+    <h1><span id="finalScore">100</span> / 100</h1>
+    <p id="finalMessage"></p>
+  </div>
+
+</div>
+
+</div>
+
+<script>
+let score = 100;
+let currentQuestion = 0;
+let pseudo = "";
+
+/* =========================
+   🔥 METS TES 50 QUESTIONS ICI
+   ========================= */
+
+const questions = [
+"Tu supportes Israël ?",
+"T’as déjà insulté un juif ou un chrétien ?",
+"Tu puff ?",
+"Tu bois ?",
+"Tu n’es pas musulman ?",
+"Tu trouves les gâteaux arabes trop sucrés ?",
+"Tu es nationaliste ?",
+"Tu vannes le Mali ou l’Inde ?",
+"Tu portes du vrai ?",
+"Tu ne parles pas arabe ?",
+"Tu es nul au foot ?",
+"Tu es nul en maths ?",
+"Tu dis des insultes devant tes parents ?",
+"Tu cries sur ton père ?",
+"Tu n’aimes pas tes frères et sœurs ?",
+"Tu n’as pas de frères et sœurs ?",
+"Tu es nul à FIFA ?",
+"Tu es en général ?",
+"Tu n’as pas de casier judiciaire ?",
+"Tu ne fuck pas la bac ?",
+"Tu n’as jamais eu de PS4 ?",
+"Tu lis des livres ?",
+"Tu veux faire droit ou littéraire ?",
+"Tu confonds juif et sioniste ?",
+"Tu aimes Kadhafi ou Barack Obama ?",
+"Tu aimes les vidéos de Squeezie ?",
+"Tu as déjà dit : doro ou vody ?",
+"Tu as déjà bu de l’alcool ?",
+"Tu n’es jamais allé dans ton pays d’origine ?",
+"Tu t’inventes des origines ?",
+"Tu as des stories à la une ou des TikTok postés ?",
+"Tu as une meilleure amie fille ?",
+"Tu ne sais pas conduire ?",
+"Tu n’aimes pas le thon ?",
+"Tu as déjà pris une sauce poivre, barbecue ou ketchup dans ton tacos ?",
+"Tu n’aimes pas les plats de la cantine ?",
+"Tu es contre le métissage ?",
+"Tu regardes mal les gens sans raison ?",
+"Tu penses que les maghrébins ne sont pas africains ?",
+"Tu crois au racisme anti-blanc ?",
+"Tu ne sais pas utiliser un ordinateur ?",
+"Ton père utilise Snapchat ?",
+"Tu trouves que Werenoi est le meilleur rappeur de France ?",
+"Tu es ami par intérêt ?",
+"Tu balances les histoires de tes potes à ta meuf (la timp) ?",
+"Tu n’aimes pas les Mister Freeze ?",
+"Tu n'aimes pas les films ?",
+"Tu trouves que Suarez est le meilleur 9 de l’histoire ?",
+"Tu aimes les fromages forts (roquefort, camembert…) ?",
+"Tu payes des trucs à des meufs qui ne sont pas de ta famille ?"
+];
+
+/* ========================= */
+
+function startQuiz() {
+  pseudo = document.getElementById("pseudo").value;
+  if(pseudo === "") {
+    alert("Entre un pseudo !");
+    return;
+  }
+
+  document.getElementById("home").classList.add("hidden");
+  document.getElementById("quiz").classList.remove("hidden");
+
+  showQuestion();
+}
+
+function showQuestion() {
+  document.getElementById("questionText").innerText = questions[currentQuestion];
+  updateProgress();
+}
+
+function answer(isYes) {
+
+  if(isYes){
+    score -= 2;
+  }
+
+  if(score < 0){
+    score = 0;
+  }
+
+  document.getElementById("score").innerText = score;
+
+  currentQuestion++;
+
+  if(currentQuestion < questions.length){
+    showQuestion();
+  } else {
+    endQuiz();
+  }
+}
+
+function updateProgress(){
+  let percent = (currentQuestion / questions.length) * 100;
+  document.getElementById("progress").style.width = percent + "%";
+}
+
+function endQuiz(){
+  document.getElementById("quiz").classList.add("hidden");
+  document.getElementById("result").classList.remove("hidden");
+
+  document.getElementById("finalScore").innerText = score;
+
+  let message = "";
+
+  if(score <= 30){
+    message = "Tu est sois un arabe de merde ou un Gwer.";
+  }
+  else if(score <= 60){
+    message = "Tu n'aime pas tes parents et les valeurs qu'il ton inculqué.";
+  }
+  else if(score <= 70){
+    message = "Tu n'a ni père ni frère et repentit toi.";
+  }
+  else if(score <= 80){
+    message = "tu fait des effort et sa fait plaisir, ce manque de serieux vient sûrement de ton entourage de kaffir.";
+  }
+  else if(score <= 90){
+    message = "Un arabe modele bien intégré, peut etre un peu trop.";
+  }
+  else {
+    message = "Un vrai rajel, Les Z'Homme wallah.";
+  }
+
+  document.getElementById("finalMessage").innerText = message;
+}
+</script>
+
+</body>
+</html>
